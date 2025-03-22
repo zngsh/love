@@ -155,6 +155,60 @@
             audio.play();
             document.getElementById('play-button').style.display = 'none'; // 播放后隐藏按钮
         }
+
+        // 拦截导航链接点击事件
+        document.querySelectorAll('nav a').forEach(function (link) {
+            link.addEventListener('click', function (event) {
+                event.preventDefault(); // 阻止默认跳转行为
+                var page = this.getAttribute('data-page');
+                loadPage(page); // 加载对应页面
+                history.pushState(null, null, '#' + page); // 更新地址栏
+            });
+        });
+
+        // 加载页面内容
+        function loadPage(page) {
+            var content = document.querySelector('.content');
+            switch (page) {
+                case 'home':
+                    content.innerHTML = `
+                        <h1>我们的恋爱空间</h1>
+                        <p>从相遇的那一刻起，我们的故事开始了</p>
+                    `;
+                    break;
+                case 'gallery':
+                    fetch('timeGallery/index.html')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('网络响应不正常');
+                            }
+                            return response.text();
+                        })
+                        .then(html => {
+                            content.innerHTML = html;
+                        })
+                        .catch(error => {
+                            console.error('加载时光画廊失败:', error);
+                            content.innerHTML = `
+                                <p>加载时光画廊失败，请检查路径或网络连接。</p>
+                                <p>错误信息：${error.message}</p>
+                            `;
+                        });
+                    break;
+                // 其他页面的处理逻辑
+                default:
+                    content.innerHTML = `
+                        <h1>我们的恋爱空间</h1>
+                        <p>从相遇的那一刻起，我们的故事开始了</p>
+                    `;
+            }
+        }
+
+        // 监听浏览器前进/后退事件
+        window.addEventListener('popstate', function () {
+            var page = window.location.hash.replace('#', '');
+            loadPage(page);
+        });
     </script>
 </body>
 </html>
