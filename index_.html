@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zngsh与Qww的恋爱空间</title>
+    <link rel="icon" type="image/x-icon" href="ico/favicon.ico">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        nav ul li a:hover {
+            color: #ff69b4;
+            transition: color 0.3s ease;
+        }
+
+        #home {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('your-image.jpg'); /* 替换为你的图片路径 */
+            background-size: cover;
+            background-position: center;
+            opacity: 0.8;
+            z-index: -1;
+        }
+
+        .content {
+            z-index: 1;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin: 0;
+        }
+
+        p {
+            font-size: 24px;
+            margin: 10px 0 0;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 36px;
+            }
+
+            p {
+                font-size: 18px;
+            }
+
+            nav ul li {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+
+        /* 播放按钮样式 */
+        #play-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #ff69b4;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#home" data-page="home">首页</a></li>
+                <li><a href="#story" data-page="story">我们的故事</a></li>
+                <li><a href="../timeGallery/index.html" data-page="../timeGallery/index.html">时光画廊</a></li>
+                <li><a href="#quotes" data-page="quotes">爱情语录</a></li>
+                <li><a href="#future" data-page="future">未来展望</a></li>
+                <li><a href="#guestbook" data-page="guestbook">留言板</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div>
+        <p>博主很忙，还在更新中~</p>
+        <p>博主很忙，还在更新中~</p>
+        <p>博主很忙，还在更新中~</p>
+        <p>博主很忙，还在更新中~</p>
+    </div>
+
+
+    <section id="home">
+        <div class="background-image"></div>
+        <div class="content">
+            <h1>我们的恋爱空间</h1>
+            <p>从相遇的那一刻起，我们的故事开始了</p>
+        </div>
+    </section>
+
+    <!-- 背景音乐 -->
+    <audio id="bg-music" loop muted>
+        <source src="src/backgroundMusic.mp3" type="audio/mpeg"> <!-- 替换为你的音乐文件路径 -->
+        您的浏览器不支持音频元素。
+    </audio>
+
+    <!-- 播放按钮 -->
+    <button id="play-button" onclick="playMusic()">播放音乐</button>
+
+    <script>
+        // 自动播放音乐
+        window.addEventListener('load', function () {
+            var audio = document.getElementById('bg-music');
+            audio.muted = false; // 取消静音
+            audio.play().catch(function (error) {
+                console.log('自动播放被阻止，需要用户交互');
+            });
+        });
+
+        // 手动播放音乐
+        function playMusic() {
+            var audio = document.getElementById('bg-music');
+            audio.play();
+            document.getElementById('play-button').style.display = 'none'; // 播放后隐藏按钮
+        }
+
+        // 拦截导航链接点击事件
+        document.querySelectorAll('nav a').forEach(function (link) {
+            link.addEventListener('click', function (event) {
+                event.preventDefault(); // 阻止默认跳转行为
+                var page = this.getAttribute('data-page');
+                loadPage(page); // 加载对应页面
+                history.pushState(null, null, '#' + page); // 更新地址栏
+            });
+        });
+
+        // 加载页面内容
+        function loadPage(page) {
+            var content = document.querySelector('.content');
+            switch (page) {
+                case 'home':
+                    content.innerHTML = `
+                        <h1>我们的恋爱空间</h1>
+                        <p>从相遇的那一刻起，我们的故事开始了</p>
+                    `;
+                    break;
+                case 'timeGallery/index.html':
+                    fetch('timeGallery/index.html')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('网络响应不正常');
+                            }
+                            return response.text();
+                        })
+                        .then(html => {
+                            content.innerHTML = html;
+                        })
+                        .catch(error => {
+                            console.error('加载时光画廊失败:', error);
+                            content.innerHTML = `
+                                <p>加载时光画廊失败，请检查路径或网络连接。</p>
+                                <p>错误信息：${error.message}</p>
+                            `;
+                        });
+                    break;
+                // 其他页面的处理逻辑
+                default:
+                    content.innerHTML = `
+                        <h1>我们的恋爱空间</h1>
+                        <p>从相遇的那一刻起，我们的故事开始了</p>
+                    `;
+            }
+        }
+
+        // 监听浏览器前进/后退事件
+        window.addEventListener('popstate', function () {
+            var page = window.location.hash.replace('#', '');
+            loadPage(page);
+        });
+    </script>
+</body>
+</html>
